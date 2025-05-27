@@ -46,7 +46,7 @@ A simple, modular Python command-line application to fetch and display the curre
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/tu-usuario/weather_app.git
+   git clone https://github.com/DADP89/weather_app.git
    cd weather_app
    ```
 
@@ -83,7 +83,7 @@ A simple, modular Python command-line application to fetch and display the curre
 Run the CLI script with the target city as an argument:
 
 ```bash
-python cli.py "Lima"
+python cli.py "Lima,PE"
 ```
 
 Example output:
