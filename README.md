@@ -68,7 +68,7 @@ A simple, modular Python command-line application to fetch and display the curre
 
 ## 🔧 Configuration
 
-1. **Create a `.env` file** in the project root:
+1. **Create a ****`.env`**** file** in the project root:
 
    ```env
    API_KEY=your_weatherapi_key_here
@@ -83,7 +83,7 @@ A simple, modular Python command-line application to fetch and display the curre
 Run the CLI script with the target city as an argument:
 
 ```bash
-python cli.py "Lima,PE"
+python cli.py "Lima"
 ```
 
 Example output:
@@ -125,24 +125,105 @@ You should see all tests passing:
 
 ---
 
-## 📁 Project Structure
+## 🌐 Web Interface and Deployment
 
+Este proyecto puede evolucionar desde una **CLI** hasta una **aplicación web** sencilla usando **Flask** y desplegarla en **Replit** (gratuito) o cualquier otro host de tu preferencia.
+
+### 1. Preparar el entorno web
+
+1. **Instala Flask** en tu entorno virtual:
+
+   ```bash
+   pip install Flask
+   ```
+2. \*\*Actualiza \*\***`requirements.txt`** añadiendo:
+
+   ```text
+   Flask
+   ```
+3. **Estructura del proyecto** para la versión web:
+
+   ```
+   weather_app/
+   ├── weather/           # Tu paquete actual
+   ├── templates/         # Carpeta para plantillas HTML
+   │   └── index.html     # Página principal con formulario y resultados
+   ├── app.py             # Servidor Flask
+   ├── requirements.txt   # Añade Flask además de las demás dependencias
+   └── README.md          # Este archivo
+   ```
+
+### 2. Crear el servidor Flask (`app.py`)
+
+```python
+from flask import Flask, request, render_template
+from weather.api import fetch_weather_data
+from weather.config import load_api_key
+
+app = Flask(__name__)
+
+@app.route("/", methods=["GET", "POST"])
+def index():
+    weather = None
+    error = None
+    if request.method == "POST":
+        city = request.form.get("city")
+        try:
+            key = load_api_key()
+            weather = fetch_weather_data(key, city)
+        except Exception as e:
+            error = str(e)
+    return render_template("index.html", weather=weather, error=error)
+
+if __name__ == "__main__":
+    app.run(debug=True)
 ```
-weather_app/
-├── weather/           # Package modules
-│   ├── __init__.py    # Package initializer
-│   ├── api.py         # API request & parsing logic
-│   ├── display.py     # Formatting & output functions
-│   └── config.py      # Environment variable loader
-├── tests/             # Test suite
-│   ├── test_api.py    # Tests for API layer
-│   └── test_display.py# Tests for display formatting
-├── cli.py             # Command-line interface entry point
-├── requirements.txt   # Python dependencies
-├── .env.example       # Example environment file (rename to .env)
-├── .gitignore         # Files and folders to ignore in git
-└── README.md          # This file
+
+### 3. Plantilla HTML (`templates/index.html`)
+
+Inserta el formulario y muestra datos, incluyendo el icono de condición:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Weather App</title>
+  <style>
+    /* estilos básicos */
+    .weather-icon { vertical-align: middle; width: 48px; height: 48px; margin-right: 0.5rem; }
+  </style>
+</head>
+<body>
+  <h1>Weather App</h1>
+  <form method="post">
+    <input type="text" name="city" placeholder="Enter city" required />
+    <button type="submit">Get Weather</button>
+  </form>
+  {% if error %}
+    <p style="color: red;">{{ error }}</p>
+  {% endif %}
+  {% if weather %}
+    <div>
+      <h2>{{ weather.location.name }}, {{ weather.location.country }}</h2>
+      <p>
+        <img class="weather-icon" src="{{ weather.current.condition.icon }}" alt="{{ weather.current.condition.text }}" />
+        <strong>Condition:</strong> {{ weather.current.condition.text }}
+      </p>
+      <!-- más campos según tu plantilla -->
+    </div>
+  {% endif %}
+</body>
+</html>
 ```
+
+### 4. Despliegue en Replit
+
+1. Crea una cuenta en [Replit](https://replit.com/).
+2. Importa tu repositorio desde GitHub.
+3. En **Secrets**, añade `API_KEY` con tu clave de WeatherAPI.
+4. Asegúrate de que `requirements.txt` contiene todas las dependencias.
+5. Clic en **Run** y tu app web estará disponible en `https://<tu-usuario>.repl.co`.
 
 ---
 
