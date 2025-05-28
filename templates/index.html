@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Weather APP</title>
+        <style>
+            body { font-family: sans-serif; max-width: 600px; margin: 2rem auto; }
+            form { margin-bottom: 1rem; }
+            .error { color: red; }
+            .weather { background: #f0f0f0; padding: 1rem; border-radius: 4px; }
+        </style>
+    </head>
+    <body>
+        <h1>Simple Weather APP</h1>
+        <form method="post">
+            <input type="text" name="city" placeholder="Enter city" required>
+            <button type="submit">Get Weather</button>
+        </form>
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+
+        {% if weather %}
+            <div class="weather">
+                <h2>{{ weather.location.name }}, {{ weather.location.region }} - {{ weather.location.country }}</h2>
+                <p><strong>Last updated:</strong> {{ weather.current.last_updated }}</p>
+                <p><strong>Temperature:</strong> {{ weather.current.temp_c }} °C</p>
+                <p><strong>Feels like:</strong> {{ weather.current.feelslike_c }} °C</p>
+                <!-- <p><strong>Condition:</strong> {{ weather.current.condition.text }}</p> -->
+                <p>
+                    <strong>Condition:</strong> {{ weather.current.condition.text }}
+                    <img 
+                        src="{{ weather.current.condition.icon }}" 
+                        alt="{{ weather.current.condition.text }}" 
+                        style="vertical-align: middle; width: 48px; height: 48px; margin-right: 0.5rem;"
+                    />
+                </p>
+                <p><strong>Wind speed:</strong> {{ weather.current.wind_kph }} km/h</p>
+                <p><strong>Humidity:</strong> {{ weather.current.humidity }} %</p>
+                <p><strong>UV:</strong> {{ weather.current.uv }}</p>
+                <hr>
+                {% set fc = weather.forecast.forecastday[0] %}
+                <p><strong>Today's Forecast</strong> {{ fc.date }}</p>
+                <p><strong>Sunrise:</strong> {{ fc.astro.sunrise }} | <strong>Sunset:</strong> {{ fc.astro.sunset }}</p>
+                <p><strong>Temp. Min:</strong> {{ fc.day.mintemp_c }} °C | <strong>Temp. Max:</strong> {{ fc.day.maxtemp_c }} °C | <strong>Temp. AVG:</strong> {{ fc.day.avgtemp_c }} °C</p>
+                <p><strong>Max Wind:</strong> {{ fc.day.maxwind_kph }} km/h | <strong>Precipitation:</strong> {{ fc.day.totalprecip_mm }} mm</p>
+                <p><strong>AVG Humidity:</strong> {{ fc.day.avghumidity }} % | <strong>Chance of rain:</strong> {{ fc.day.daily_chance_of_rain }} %</p>
+            </div>
+        {% endif %}
+    </body>
+</html>
